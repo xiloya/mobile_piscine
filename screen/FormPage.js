@@ -1,26 +1,56 @@
-import * as React from "react";
-import { TextInput, Button } from "react-native-paper";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
+import { TextInput, Button, ProgressBar } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 
-const FormPage = ({ onGoBack }) => {
-  const [name, setName] = React.useState("");
-  const [surname, setSurname] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
+const FormPage = () => {
+  const navigation = useNavigation();
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleSubmit = () => {
-    console.log("Name:", name);
-    console.log("Surname:", surname);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Confirm Password:", confirmPassword);
+    setLoading(true);
+
+    setTimeout(() => {
+      navigation.navigate("Dashboard");
+
+      setLoading(false);
+    }, 2000);
+  };
+
+  const isButtonDisabled = () => {
+    return (
+      name.trim() === "" ||
+      surname.trim() === "" ||
+      email.trim() === "" ||
+      password.trim() === "" ||
+      confirmPassword.trim() === ""
+    );
+  };
+
+  const updateProgress = () => {
+    const fieldsCompleted =
+      (name.trim() !== "") +
+      (surname.trim() !== "") +
+      (email.trim() !== "") +
+      (password.trim() !== "") +
+      (confirmPassword.trim() !== "");
+
+    const totalFields = 5;
+    const newProgress = (fieldsCompleted / totalFields) * 100;
+    setProgress(newProgress);
   };
 
   return (
@@ -35,21 +65,30 @@ const FormPage = ({ onGoBack }) => {
           mode="outlined"
           label="Name"
           value={name}
-          onChangeText={(text) => setName(text)}
+          onChangeText={(text) => {
+            setName(text);
+            updateProgress();
+          }}
           style={styles.input}
         />
         <TextInput
           mode="outlined"
           label="Surname"
           value={surname}
-          onChangeText={(text) => setSurname(text)}
+          onChangeText={(text) => {
+            setSurname(text);
+            updateProgress();
+          }}
           style={styles.input}
         />
         <TextInput
           mode="outlined"
           label="Email"
           value={email}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => {
+            setEmail(text);
+            updateProgress();
+          }}
           style={styles.input}
         />
         <TextInput
@@ -57,7 +96,10 @@ const FormPage = ({ onGoBack }) => {
           label="Password"
           value={password}
           secureTextEntry
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={(text) => {
+            setPassword(text);
+            updateProgress();
+          }}
           style={styles.input}
         />
         <TextInput
@@ -65,13 +107,30 @@ const FormPage = ({ onGoBack }) => {
           label="Confirm Password"
           value={confirmPassword}
           secureTextEntry
-          onChangeText={(text) => setConfirmPassword(text)}
+          onChangeText={(text) => {
+            setConfirmPassword(text);
+            updateProgress();
+          }}
           style={styles.input}
         />
-        <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-          Submit
+        <ProgressBar
+          progress={progress / 100}
+          color="green"
+          style={styles.progressBar}
+        />
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+          style={styles.button}
+          disabled={isButtonDisabled()}
+        >
+          {loading ? <ActivityIndicator color="#fff" /> : "Submit"}
         </Button>
-        <TouchableOpacity onPress={onGoBack} style={styles.goBackButton}>
+
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.goBackButton}
+        >
           <Text style={styles.goBackText}>Go Back Home</Text>
         </TouchableOpacity>
       </View>
@@ -103,6 +162,9 @@ const styles = StyleSheet.create({
   goBackText: {
     color: "#fff",
     fontSize: 16,
+  },
+  progressBar: {
+    marginTop: 10,
   },
   backgroundImage: {
     flex: 1,

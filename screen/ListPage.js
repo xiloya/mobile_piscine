@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
-
+import { useNavigation } from "@react-navigation/native";
 const listePrenoms = [
   { prenom: "Devin" },
   { prenom: "Dan" },
@@ -19,8 +20,20 @@ const listePrenoms = [
   { prenom: "Jimmy" },
   { prenom: "Julie" },
 ];
+const ListPage = () => {
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
 
-const ListPage = ({ onGoBack }) => {
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  });
+
+  const navigateToHomePage = () => {
+    navigation.goBack();
+  };
+
   return (
     <ImageBackground
       source={{
@@ -29,14 +42,27 @@ const ListPage = ({ onGoBack }) => {
       style={styles.backgroundImage}
     >
       <View style={styles.container}>
-        {listePrenoms.map((item, index) => (
-          <View key={index} style={styles.itemContainer}>
-            <Text style={styles.itemText}>{item.prenom}</Text>
-          </View>
-        ))}
-        <TouchableOpacity onPress={onGoBack} style={styles.goBackButton}>
-          <Text style={styles.goBackText}>Go Back Home</Text>
-        </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <>
+            {listePrenoms.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.itemContainer}
+                onPress={navigateToHomePage}
+              >
+                <Text style={styles.itemText}>{item.prenom}</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              onPress={navigateToHomePage}
+              style={styles.goBackButton}
+            >
+              <Text style={styles.goBackText}>Go Back Home</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </ImageBackground>
   );
