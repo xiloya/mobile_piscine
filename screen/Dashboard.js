@@ -9,7 +9,6 @@ import {
   Image,
 } from "react-native";
 import { Card } from "react-native-paper";
-
 import { useNavigation } from "@react-navigation/native";
 
 const Dashboard = () => {
@@ -20,13 +19,13 @@ const Dashboard = () => {
     email: "user@example.com",
     profilePicture:
       "https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-  }); // Replace with actual user data or fetch it
+  });
 
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 2000);
-  }, []);
+  }, [user]);
 
   const handleLogout = () => {
     setLoading(true);
@@ -64,7 +63,6 @@ const Dashboard = () => {
                 <Text>Email: {user.email}</Text>
               </Card.Content>
             </Card>
-            {/* Add more content cards as needed */}
             <TouchableOpacity
               onPress={handleLogout}
               style={styles.logoutButton}
@@ -77,6 +75,7 @@ const Dashboard = () => {
     </ImageBackground>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
